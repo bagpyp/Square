@@ -4,13 +4,13 @@ Created on Fri May 21 22:18:14 2021
 
 @author: Dexter
 """
-
-k = 10
+start = 10
+k = 30
 screen_x,screen_y = 5,1
-
+a,b,c=2,3,5
 from tkinter import *
 from random import randint
-from winsound import Beep
+# from winsound import Beep
 
 scoot=Tk()
 
@@ -20,6 +20,7 @@ hero_x=7
 hero_y=7 
 philmo_x=randint(4,17)
 philmo_y=randint(4,17)
+s=0
 
 def keydown(e):
     #this is global assignment might be a reason to consider revamping 
@@ -29,6 +30,7 @@ def keydown(e):
     global hero_y
     global philmo_x
     global philmo_y
+    global s
     
     hero_movers={
         'a':(0,-1),
@@ -36,8 +38,8 @@ def keydown(e):
         'w':(-1,0),
         's':(1,0)}
     
-    Beep(randint(50,290),randint(30,100))
-    label=Label(scoot,padx=screen_x,pady=screen_y,bg=color_tuple(hero_x,hero_y,0)).grid(row=hero_y,column=hero_x)
+    # Beep(randint(50,290),randint(30,100))
+    # label=Label(scoot,padx=screen_x,pady=screen_y,bg=color_tuple(hero_x,hero_y,0)).grid(row=hero_y,column=hero_x)
     frame.configure(bg='#{}{}{}'.format(str(hex((5*hero_y))).zfill(2),
                     str(hex(16+int((44)**2)%256)),
                     str(hex(255-7*hero_x)).zfill(2)).replace('0x',''))
@@ -50,35 +52,38 @@ def keydown(e):
     philmo_y+=randint(-1,1)
     philmo.grid(row=philmo_y,column=philmo_x)
     frame.grid(row=hero_y,column=hero_x)
+    build_background()
+    s+=1
 
-def color_tuple(i=0,j=0,random=1):
-    r = lambda x: str(hex(x*(random*randint(16,255)+i**2+j**2)%256))[2:]
-    return '#' + f'{r(5)}{r(7)}{r(10)}'.zfill(6)
+def color_tuple(steps,i=0,j=0,random=1):
+    r = lambda x: str(hex(x*((random*randint(16,255)+i**2+(j+steps)**2))%256))[2:]
+    return '#' + f'{r(a)}{r(b)}{r(c)}'.zfill(6)
     
     
     
   
 def keyup(e):
-    Beep(randint(80,500),randint(20,70))    
+    # Beep(randint(80,500),randint(20,70))
+    return    
 frame_x=10
 frame_y=10
-init_color=str(hex(randint(0,255))).replace('0x','').zfill(2)
-for i in range(k):
-    for j in range(k*2):
-        if i+j % 2 == 0:
-#        label=Label(scoot,pady=screen_y,padx=screen_x,bg='#{}{}{}'.format(str(hex(16+int(i**(2))%256)).zfill(2),
-#                    init_color,str(hex(16+int(j**(2))%256)).zfill(2)).replace('0x','')).grid(row=i,column=j)
-            label=Label(scoot,padx=screen_x,pady=screen_y,bg=color_tuple()).grid(row=i,column=j)
-        else: 
-            label=Label(scoot,padx=screen_x,pady=screen_y,bg=color_tuple(i,j,0)).grid(row=i,column=j)
+# init_color=str(hex(randint(0,255))).replace('0x','').zfill(2)
+
+def build_background():
+    global s
+    for i in range(start,k+start):
+        for j in range(start,(k+start)*2):
+                label=Label(scoot,padx=screen_x,pady=screen_y,bg=color_tuple(s, random=0, i=i, j=j)).grid(row=i,column=j)
+    
+build_background()
 
         
   
-philmo = Frame(scoot, width=10, height=10,bg='cyan')
-frame = Frame(scoot, width=10, height=10,bg='red')
+philmo = Frame(scoot, width=screen_x, height=screen_y,bg='cyan')
+frame = Frame(scoot, width=screen_x, height=screen_y,bg='red')
 frame.bind("<KeyPress>", keydown)
 frame.bind("<KeyRelease>", keyup)
-philmo.bind("<KeyPress>", keydown)
+# philmo.bind("<KeyPress>", keydown)
 frame.grid(row=hero_y,column=hero_x)
 philmo.grid(column=philmo_x,row=philmo_y)
 frame.focus_set()
